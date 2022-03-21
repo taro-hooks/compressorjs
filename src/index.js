@@ -1,9 +1,7 @@
-import toBlob from 'blueimp-canvas-to-blob';
+import toBlob from 'blueimp-canvas-to-blob-global';
 import isBlob from 'is-blob';
 import DEFAULTS from './defaults';
-import {
-  WINDOW,
-} from './constants';
+import { WINDOW } from './constants';
 import {
   arrayBufferToDataURL,
   getAdjustedSizes,
@@ -53,12 +51,16 @@ export default class Compressor {
     const mimeType = file.type;
 
     if (!isImageType(mimeType)) {
-      this.fail(new Error('The first argument must be an image File or Blob object.'));
+      this.fail(
+        new Error('The first argument must be an image File or Blob object.'),
+      );
       return;
     }
 
     if (!URL || !FileReader) {
-      this.fail(new Error('The current browser does not support image compression.'));
+      this.fail(
+        new Error('The current browser does not support image compression.'),
+      );
       return;
     }
 
@@ -137,7 +139,10 @@ export default class Compressor {
 
     // Match all browsers that use WebKit as the layout engine in iOS devices,
     // such as Safari for iOS, Chrome for iOS, and in-app browsers.
-    if (WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(WINDOW.navigator.userAgent)) {
+    if (
+      WINDOW.navigator
+      && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(WINDOW.navigator.userAgent)
+    ) {
       // Fix the `The operation is insecure` error (#57)
       image.crossOrigin = 'anonymous';
     }
@@ -147,17 +152,15 @@ export default class Compressor {
   }
 
   draw({
-    naturalWidth,
-    naturalHeight,
-    rotate = 0,
-    scaleX = 1,
-    scaleY = 1,
+    naturalWidth, naturalHeight, rotate = 0, scaleX = 1, scaleY = 1,
   }) {
     const { file, image, options } = this;
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     const is90DegreesRotated = Math.abs(rotate) % 180 === 90;
-    const resizable = (options.resize === 'contain' || options.resize === 'cover') && isPositiveNumber(options.width) && isPositiveNumber(options.height);
+    const resizable = (options.resize === 'contain' || options.resize === 'cover')
+      && isPositiveNumber(options.width)
+      && isPositiveNumber(options.height);
     let maxWidth = Math.max(options.maxWidth, 0) || Infinity;
     let maxHeight = Math.max(options.maxHeight, 0) || Infinity;
     let minWidth = Math.max(options.minWidth, 0) || 0;
@@ -175,23 +178,32 @@ export default class Compressor {
       aspectRatio = width / height;
     }
 
-    ({ width: maxWidth, height: maxHeight } = getAdjustedSizes({
-      aspectRatio,
-      width: maxWidth,
-      height: maxHeight,
-    }, 'contain'));
-    ({ width: minWidth, height: minHeight } = getAdjustedSizes({
-      aspectRatio,
-      width: minWidth,
-      height: minHeight,
-    }, 'cover'));
+    ({ width: maxWidth, height: maxHeight } = getAdjustedSizes(
+      {
+        aspectRatio,
+        width: maxWidth,
+        height: maxHeight,
+      },
+      'contain',
+    ));
+    ({ width: minWidth, height: minHeight } = getAdjustedSizes(
+      {
+        aspectRatio,
+        width: minWidth,
+        height: minHeight,
+      },
+      'cover',
+    ));
 
     if (resizable) {
-      ({ width, height } = getAdjustedSizes({
-        aspectRatio,
-        width,
-        height,
-      }, options.resize));
+      ({ width, height } = getAdjustedSizes(
+        {
+          aspectRatio,
+          width,
+          height,
+        },
+        options.resize,
+      ));
     } else {
       ({ width = naturalWidth, height = naturalHeight } = getAdjustedSizes({
         aspectRatio,
@@ -200,8 +212,12 @@ export default class Compressor {
       }));
     }
 
-    width = Math.floor(normalizeDecimalNumber(Math.min(Math.max(width, minWidth), maxWidth)));
-    height = Math.floor(normalizeDecimalNumber(Math.min(Math.max(height, minHeight), maxHeight)));
+    width = Math.floor(
+      normalizeDecimalNumber(Math.min(Math.max(width, minWidth), maxWidth)),
+    );
+    height = Math.floor(
+      normalizeDecimalNumber(Math.min(Math.max(height, minHeight), maxHeight)),
+    );
 
     const destX = -width / 2;
     const destY = -height / 2;
@@ -215,14 +231,17 @@ export default class Compressor {
       let srcWidth = naturalWidth;
       let srcHeight = naturalHeight;
 
-      ({ width: srcWidth, height: srcHeight } = getAdjustedSizes({
-        aspectRatio,
-        width: naturalWidth,
-        height: naturalHeight,
-      }, {
-        contain: 'cover',
-        cover: 'contain',
-      }[options.resize]));
+      ({ width: srcWidth, height: srcHeight } = getAdjustedSizes(
+        {
+          aspectRatio,
+          width: naturalWidth,
+          height: naturalHeight,
+        },
+        {
+          contain: 'cover',
+          cover: 'contain',
+        }[options.resize],
+      ));
       srcX = (naturalWidth - srcWidth) / 2;
       srcY = (naturalHeight - srcHeight) / 2;
 
@@ -245,7 +264,10 @@ export default class Compressor {
     let fillStyle = 'transparent';
 
     // Converts PNG files over the `convertSize` to JPEGs.
-    if (file.size > options.convertSize && options.convertTypes.indexOf(options.mimeType) >= 0) {
+    if (
+      file.size > options.convertSize
+      && options.convertTypes.indexOf(options.mimeType) >= 0
+    ) {
       options.mimeType = 'image/jpeg';
     }
 
@@ -297,11 +319,7 @@ export default class Compressor {
     }
   }
 
-  done({
-    naturalWidth,
-    naturalHeight,
-    result,
-  }) {
+  done({ naturalWidth, naturalHeight, result }) {
     const { file, image, options } = this;
 
     if (URL && !options.checkOrientation) {
@@ -310,14 +328,19 @@ export default class Compressor {
 
     if (result) {
       // Returns original file if the result is greater than it and without size related options
-      if (options.strict && result.size > file.size && options.mimeType === file.type && !(
-        options.width > naturalWidth
-        || options.height > naturalHeight
-        || options.minWidth > naturalWidth
-        || options.minHeight > naturalHeight
-        || options.maxWidth < naturalWidth
-        || options.maxHeight < naturalHeight
-      )) {
+      if (
+        options.strict
+        && result.size > file.size
+        && options.mimeType === file.type
+        && !(
+          options.width > naturalWidth
+          || options.height > naturalHeight
+          || options.minWidth > naturalWidth
+          || options.minHeight > naturalHeight
+          || options.maxWidth < naturalWidth
+          || options.maxHeight < naturalHeight
+        )
+      ) {
         result = file;
       } else {
         const date = new Date();
