@@ -5,7 +5,7 @@
  * Copyright 2018-present Chen Fengyuan
  * Released under the MIT license
  *
- * Date: 2022-03-21T14:50:20.650Z
+ * Date: 2022-03-22T15:13:43.699Z
  */
 
 (function (global, factory) {
@@ -122,6 +122,7 @@
     (function (window) {
 
       var CanvasPrototype = window.HTMLCanvasElement && window.HTMLCanvasElement.prototype;
+      var hasCanvasPrototype = !!CanvasPrototype;
 
       var hasBlobConstructor = window.Blob && function () {
         try {
@@ -184,37 +185,39 @@
         return bb.getBlob(mediaType);
       };
 
-      if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
-        if (CanvasPrototype.mozGetAsFile) {
-          CanvasPrototype.toBlob = function (callback, type, quality) {
-            var self = this;
-            setTimeout(function () {
-              if (quality && CanvasPrototype.toDataURL && dataURLtoBlob) {
-                callback(dataURLtoBlob(self.toDataURL(type, quality)));
-              } else {
-                callback(self.mozGetAsFile('blob', type));
-              }
-            });
-          };
-        } else if (CanvasPrototype.toDataURL && dataURLtoBlob) {
-          if (CanvasPrototype.msToBlob) {
+      if (hasCanvasPrototype) {
+        if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
+          if (CanvasPrototype.mozGetAsFile) {
             CanvasPrototype.toBlob = function (callback, type, quality) {
               var self = this;
               setTimeout(function () {
-                if ((type && type !== 'image/png' || quality) && CanvasPrototype.toDataURL && dataURLtoBlob) {
+                if (quality && CanvasPrototype.toDataURL && dataURLtoBlob) {
                   callback(dataURLtoBlob(self.toDataURL(type, quality)));
                 } else {
-                  callback(self.msToBlob(type));
+                  callback(self.mozGetAsFile('blob', type));
                 }
               });
             };
-          } else {
-            CanvasPrototype.toBlob = function (callback, type, quality) {
-              var self = this;
-              setTimeout(function () {
-                callback(dataURLtoBlob(self.toDataURL(type, quality)));
-              });
-            };
+          } else if (CanvasPrototype.toDataURL && dataURLtoBlob) {
+            if (CanvasPrototype.msToBlob) {
+              CanvasPrototype.toBlob = function (callback, type, quality) {
+                var self = this;
+                setTimeout(function () {
+                  if ((type && type !== 'image/png' || quality) && CanvasPrototype.toDataURL && dataURLtoBlob) {
+                    callback(dataURLtoBlob(self.toDataURL(type, quality)));
+                  } else {
+                    callback(self.msToBlob(type));
+                  }
+                });
+              };
+            } else {
+              CanvasPrototype.toBlob = function (callback, type, quality) {
+                var self = this;
+                setTimeout(function () {
+                  callback(dataURLtoBlob(self.toDataURL(type, quality)));
+                });
+              };
+            }
           }
         }
       }

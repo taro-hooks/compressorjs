@@ -1570,10 +1570,10 @@ bl@^4.0.3:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-blueimp-canvas-to-blob-global@^3.29.0:
-  version "3.29.0"
-  resolved "https://registry.npmmirror.com/blueimp-canvas-to-blob-global/-/blueimp-canvas-to-blob-global-3.29.0.tgz#7b20c39d74312dde1bdfdecaadbe251759c6dfc0"
-  integrity sha512-4QyI3/uyoyeqNsR2DHsy6w4y7Z8ATuFt8UKAQw5d70QU7bJT7EywmkZbsStGdOLFbNeLiLYc3POOfj9UU/7jUg==
+blueimp-canvas-to-blob-global@^3.29.1:
+  version "3.29.1"
+  resolved "https://registry.npmjs.org/blueimp-canvas-to-blob-global/-/blueimp-canvas-to-blob-global-3.29.1.tgz#d447c5ce994b2549d6335d41c3ab5087b96fd5e8"
+  integrity sha512-7iiAoFX7nEdm8H8ErlewkvUvNZTMH47jro1sVOuvzCn3xcfNGsYBItmE/N/tcjADgOvCW9juiU/LFJjHUKw5fw==
 
 body-parser@^1.19.0:
   version "1.19.2"

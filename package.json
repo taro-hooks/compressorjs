@@ -1,6 +1,6 @@
 {
   "name": "compressorjs-global",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "JavaScript image compressor.",
   "main": "dist/compressor.common.js",
   "module": "dist/compressor.esm.js",
@@ -44,7 +44,7 @@
     "test:coverage": "cat coverage/lcov.info | codecov"
   },
   "dependencies": {
-    "blueimp-canvas-to-blob-global": "^3.29.0",
+    "blueimp-canvas-to-blob-global": "^3.29.1",
     "is-blob": "^2.1.0"
   },
   "devDependencies": {
